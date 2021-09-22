@@ -1,6 +1,8 @@
 #ifndef _MATRIX_H__
 #define _MATRIX_H__
 
+#define MAGNITUDE_CUTOFF 0.000001
+
 #include<string>
 #include<array>
 #include<iostream>
@@ -215,7 +217,7 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef()
 
 
 
-        if(maxMagnitude < 0.000001)
+        if(maxMagnitude < MAGNITUDE_CUTOFF)
         {
             continue;
         }
@@ -229,7 +231,7 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef()
                 continue;
             }
 
-            if((*ret.magnitudeFunction)(ret.getEntry(j,i)) > 0.000001)
+            if((*ret.magnitudeFunction)(ret.getEntry(j,i)) > MAGNITUDE_CUTOFF)
             {
                 for(int k = 0; k < C;k++)
                 {
@@ -264,7 +266,7 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef()
 
         }
         //std::cout << maxEntry << "\n";
-        if(maxMagnitude < 0.000001)
+        if(maxMagnitude < MAGNITUDE_CUTOFF)
         {
             continue;
         }

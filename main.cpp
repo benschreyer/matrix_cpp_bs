@@ -1,4 +1,5 @@
 #include"matrix.h"
+#include"complex.h"
 #include<iostream>
 #include<math.h>
 
@@ -24,5 +25,9 @@ int main(void)
 
     std::cout << RRedMe.toString() << "\n";
     std::cout << RRedMe.RRef().toString() << "\n";
+
+    Complex z = Complex(-3, 4);
+    std::cout << z.toString() << "   " << z.Magnitude() << "    "<< (z + z * z.Conjugate()).toString() << "\n";
+
     return 0;
 }
