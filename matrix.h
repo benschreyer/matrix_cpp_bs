@@ -12,31 +12,31 @@ class Matrix
     private:
         int rows;
         int columns;
-        std::string (*toStringFunction)(T x);
-        float (*magnitudeFunction)(T x);
+        std::string (*toStringFunction)(const T x);
+        float (*magnitudeFunction)(const T x);
         //Pointer to array of _rows_ pointers to each row array
         T** ptr;
         T defaultValue;
 
 
     public:
-        Matrix<R,C,T>(std::string  (*tSF)(T), float (*magF)(T), std::array<T, R*C> const& data, T defaultValue);
-        Matrix<R,C,T>(std::string  (*tSF)(T), float (*magF)(T), T defaultValue);
+        Matrix<R,C,T>(std::string  (*tSF)(const T&), float (*magF)(const T&), std::array<T&, R*C> const& data, T& defaultValue);
+        Matrix<R,C,T>(std::string  (*tSF)(const T&), float (*magF)(const T&), T& defaultValue);
 
 
         void setEntry(int row, int column, T data);
-        T getEntry(int row, int column);
+        T getEntry(int row, int column) const;
 
         //Matrix<T> operator*(const Matrix<T>& mat);
         template<int J>
-        Matrix<R,J,T> operator*(Matrix<R,J,T>& mat);
+        Matrix<R,J,T> operator*(const Matrix<R,J,T>& mat) const;
 
-        Matrix<R,C,T> operator+(Matrix<R,C,T>& mat);
-        Matrix<R,C,T> operator*(const T& n);
+        Matrix<R,C,T> operator+(const Matrix<R,C,T>& mat) const;
+        Matrix<R,C,T> operator*(const T& n) const;
 
-        Matrix<R,C,T> RRef();
+        Matrix<R,C,T> RRef() const;
 
-        std::string toString();
+        std::string toString() const;
 
         //std::string (*pm)(T) getToStringFunction();
 
@@ -49,7 +49,7 @@ class Matrix
 
 
 template <int R, int C,typename T>
-Matrix<R,C,T>::Matrix(std::string  (*tSF)(T), float (*magF)(T), std::array<T, R*C> const& data, T defaultValue)
+Matrix<R,C,T>::Matrix(std::string  (*tSF)(const T&), float (*magF)(const T&), std::array<T&, R*C> const& data, T& defaultValue)
 {   
     this->rows = R;
     this->columns = C;
@@ -70,7 +70,7 @@ Matrix<R,C,T>::Matrix(std::string  (*tSF)(T), float (*magF)(T), std::array<T, R*
 }
 
 template <int R, int C,typename T>
-Matrix<R,C,T>::Matrix(std::string  (*tSF)(T), float (*magF)(T) , T defaultValue)
+Matrix<R,C,T>::Matrix(std::string  (*tSF)(const T&), float (*magF)(const T&) , T& defaultValue)
 {   
     
     this->rows = R;
@@ -98,13 +98,13 @@ void Matrix<R,C,T>::setEntry(int row, int column, T data)
 }
 
 template <int R, int C,typename T>
-T Matrix<R,C,T>::getEntry(int row, int column)
+T Matrix<R,C,T>::getEntry(int row, int column) const
 {
     return ptr[row][column];
 }
 
 template <int R, int C,typename T>
-std::string Matrix<R,C,T>::toString()
+std::string Matrix<R,C,T>::toString() const
 {
     std::string ret = "";
     for(int i = 0; i < this->rows;i++)
@@ -120,7 +120,7 @@ std::string Matrix<R,C,T>::toString()
 
 template <int R, int C,typename T>
 template <int J>
-Matrix<R,J,T> Matrix<R,C,T>::operator*(Matrix<R,J,T>& mat)
+Matrix<R,J,T> Matrix<R,C,T>::operator*(const Matrix<R,J,T>& mat) const
 {
     Matrix<R,J,T> ret = Matrix<R,J,T>(this->toStringFunction, this->magnitudeFunction, this->defaultValue);
     
@@ -140,7 +140,7 @@ Matrix<R,J,T> Matrix<R,C,T>::operator*(Matrix<R,J,T>& mat)
     return ret;
 }
 template <int R, int C,typename T>
-Matrix<R,C,T> Matrix<R,C,T>::operator+(Matrix<R,C,T>& mat)
+Matrix<R,C,T> Matrix<R,C,T>::operator+(const Matrix<R,C,T>& mat) const
 {
     Matrix<R,C,T> ret = Matrix<R,C,T>(this->toStringFunction, this-> magnitudeFunction, this->defaultValue);
     
@@ -154,7 +154,7 @@ Matrix<R,C,T> Matrix<R,C,T>::operator+(Matrix<R,C,T>& mat)
     return ret;
 }
 template <int R, int C,typename T>
-Matrix<R,C,T> Matrix<R,C,T>::operator*(const T& n)
+Matrix<R,C,T> Matrix<R,C,T>::operator*(const T& n) const
 {
     Matrix<R,C,T> ret = Matrix<R,C,T>(this->toStringFunction, this->magnitudeFunction , this->defaultValue);
     
@@ -169,7 +169,7 @@ Matrix<R,C,T> Matrix<R,C,T>::operator*(const T& n)
 }
 
 template <int R, int C,typename T>
-Matrix<R,C,T> Matrix<R,C,T>::RRef()
+Matrix<R,C,T> Matrix<R,C,T>::RRef() const
 {
     Matrix<R,C,T> ret = Matrix<R,C,T>(this->toStringFunction, this->magnitudeFunction, this->defaultValue);
     

@@ -15,13 +15,18 @@ class Complex
         Complex(float a,  float b);
         Complex(std::array<float, 2>);
 
-        std::string toString();
+        std::string toString() const;
 
-        Complex operator+(const Complex& x);
-        Complex operator*(const Complex& x);
-
-        Complex Conjugate();
-        float Magnitude();
+        Complex operator+(const Complex& x) const;
+        Complex operator*(const Complex& x) const;
+        Complex operator/(const Complex& x) const;
+        Complex operator*(const float x) const;
+        Complex Conjugate() const;
+        float MagnitudeSquared() const;
+        float Magnitude() const;
+        //static float MagnitudeOf(Complex& x);
+        //static std::string toStringOf(const Complex& x);
+        
 
         //Complex pow(Complex x);
 
@@ -46,31 +51,55 @@ Complex::Complex(std::array<float, 2> data)
 
 
 
-std::string Complex::toString()
+std::string Complex::toString() const
 {
     return std::to_string(a) + " " + std::to_string(b) + "i";
 }
 
-Complex Complex::operator*(const Complex& x)
+
+
+Complex Complex::operator*(const Complex& x) const
 {
     Complex ret = Complex(x.a * this->a - (x.b * this->b), this->a * x.b + this->b * x.a);
 
     return ret;
 }
-Complex Complex::operator+(const Complex& x)
+
+Complex Complex::operator*(const float x) const
+{
+    Complex ret = Complex(x * this->a, this->b * x);
+
+    return ret;
+}
+
+Complex Complex::operator/(const Complex& x) const
+{
+    Complex ret = (x.Conjugate() * (*this)) * (1/(x.MagnitudeSquared()) );
+
+    return ret;
+}
+
+Complex Complex::operator+(const Complex& x) const
 {
     return Complex(x.a + this->a, x.b + this->b);
 }
 
-Complex Complex::Conjugate()
+Complex Complex::Conjugate() const
 {
     return Complex(this->a, -1.0 * this->b);
 }
 
-float Complex::Magnitude()
+float Complex::Magnitude() const
 {
-    return sqrt(((*this) * Complex(this->a, this->b * -1.0)).a);
+    return sqrt(this->MagnitudeSquared());
 }
+
+float Complex::MagnitudeSquared() const
+{
+    return ((*this) * this->Conjugate()).a;
+}
+
+
 
 
 
