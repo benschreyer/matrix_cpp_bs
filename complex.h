@@ -1,7 +1,7 @@
 #ifndef _COMPLEX_H__
 #define _COMPLEX_H__
 
-#define MAGNITUDE_CUTOFF 0.000001
+
 
 #include<string>
 #include<math.h>

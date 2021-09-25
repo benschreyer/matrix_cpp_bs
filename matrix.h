@@ -1,7 +1,7 @@
 #ifndef _MATRIX_H__
 #define _MATRIX_H__
 
-#define MAGNITUDE_CUTOFF 0.000001
+#define MAGNITUDE_CUTOFF 0.0000001
 
 #include<string>
 #include<array>
