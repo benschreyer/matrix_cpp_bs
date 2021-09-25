@@ -12,17 +12,17 @@ class Matrix
     private:
         int rows;
         int columns;
-        std::string (*toStringFunction)(const T x);
-        float (*magnitudeFunction)(const T x);
+        //std::string (*toStringFunction)(const T x);
+        //float (*magnitudeFunction)(const T x);
         //Pointer to array of _rows_ pointers to each row array
         T** ptr;
-        T defaultValue;
+
 
 
     public:
-        Matrix<R,C,T>(std::string  (*tSF)(const T&), float (*magF)(const T&), std::array<T&, R*C> const& data, T& defaultValue);
-        Matrix<R,C,T>(std::string  (*tSF)(const T&), float (*magF)(const T&), T& defaultValue);
-
+        Matrix<R,C,T>(/*std::string  (*tSF)(const T), float (*magF)(const T),*/ T* r);
+        Matrix<R,C,T>(/*std::string  (*tSF)(const T), float (*magF)(const T),*/);
+        ~Matrix<R,C,T>();
 
         void setEntry(int row, int column, T data);
         T getEntry(int row, int column) const;
@@ -46,47 +46,56 @@ class Matrix
 
 };
 
+template <int R, int C,typename T>
+Matrix<R,C,T>::~Matrix()
+{
+    for(int i = 0;i < this->rows;i++)
+    {
+        free(this->ptr[i]);
+    }
+    free(ptr);
+}
 
 
 template <int R, int C,typename T>
-Matrix<R,C,T>::Matrix(std::string  (*tSF)(const T&), float (*magF)(const T&), std::array<T&, R*C> const& data, T& defaultValue)
+Matrix<R,C,T>::Matrix(/*std::string  (*tSF)(const T), float (*magF)(const T),*/ T* r)
 {   
     this->rows = R;
     this->columns = C;
-    this->ptr = new T*[this->rows];
-    this->toStringFunction = tSF;
-    this->defaultValue = defaultValue;
-    this->magnitudeFunction = magF;
+    this->ptr = (T**)malloc(sizeof(T*) * this->rows);
+
+
 
     for(int i = 0; i < this->rows; i++)
     {
-        this->ptr[i] = new T[this->columns];
+        this->ptr[i] = (T*)malloc(sizeof(T) * this->columns);
 
         for(int j = 0; j < this->columns; j++)
         {
-            this->ptr[i][j] = data[j + i * this->columns];
+            this->ptr[i][j] = r[j + this->columns * i];
         }
     }
 }
 
+
+
 template <int R, int C,typename T>
-Matrix<R,C,T>::Matrix(std::string  (*tSF)(const T&), float (*magF)(const T&) , T& defaultValue)
+Matrix<R,C,T>::Matrix(/*std::string  (*tSF)(const T), float (*magF)(const T) , */ )
 {   
     
     this->rows = R;
     this->columns = C;
-    this->ptr = new T*[this->rows];
-    this->toStringFunction = tSF;
-    this->defaultValue = defaultValue;
-    this->magnitudeFunction = magF;
+    this->ptr = (T**)malloc(sizeof(T*) * this->rows);
+
+
 
     for(int i = 0; i < this->rows; i++)
     {
-        this->ptr[i] = new T[this->columns];
+        this->ptr[i] = (T*)malloc(sizeof(T) * this->columns);
 
         for(int j = 0; j < this->columns; j++)
         {
-            this->ptr[i][j] = defaultValue;
+            this->ptr[i][j] = T();
         }
     }
 }
@@ -111,7 +120,8 @@ std::string Matrix<R,C,T>::toString() const
     {
         for(int j = 0;j < this->columns;j++)
         {
-            ret += (*this->toStringFunction)(this->ptr[i][j]) + ", ";
+            //(*this->toStringFunction)
+            ret += this->ptr[i][j]._toStringOf(this->ptr[i][j]) + ", ";
         }
         ret += "\n";
     }
@@ -122,7 +132,7 @@ template <int R, int C,typename T>
 template <int J>
 Matrix<R,J,T> Matrix<R,C,T>::operator*(const Matrix<R,J,T>& mat) const
 {
-    Matrix<R,J,T> ret = Matrix<R,J,T>(this->toStringFunction, this->magnitudeFunction, this->defaultValue);
+    Matrix<R,J,T> ret = Matrix<R,J,T>();
     
     for(int i = 0; i < R; i++)
     {
@@ -142,7 +152,7 @@ Matrix<R,J,T> Matrix<R,C,T>::operator*(const Matrix<R,J,T>& mat) const
 template <int R, int C,typename T>
 Matrix<R,C,T> Matrix<R,C,T>::operator+(const Matrix<R,C,T>& mat) const
 {
-    Matrix<R,C,T> ret = Matrix<R,C,T>(this->toStringFunction, this-> magnitudeFunction, this->defaultValue);
+    Matrix<R,C,T> ret = Matrix<R,C,T>();
     
     for(int i = 0; i < R; i++)
     {
@@ -156,7 +166,7 @@ Matrix<R,C,T> Matrix<R,C,T>::operator+(const Matrix<R,C,T>& mat) const
 template <int R, int C,typename T>
 Matrix<R,C,T> Matrix<R,C,T>::operator*(const T& n) const
 {
-    Matrix<R,C,T> ret = Matrix<R,C,T>(this->toStringFunction, this->magnitudeFunction , this->defaultValue);
+    Matrix<R,C,T> ret = Matrix<R,C,T>();
     
     for(int i = 0; i < R; i++)
     {
@@ -171,7 +181,7 @@ Matrix<R,C,T> Matrix<R,C,T>::operator*(const T& n) const
 template <int R, int C,typename T>
 Matrix<R,C,T> Matrix<R,C,T>::RRef() const
 {
-    Matrix<R,C,T> ret = Matrix<R,C,T>(this->toStringFunction, this->magnitudeFunction, this->defaultValue);
+    Matrix<R,C,T> ret = Matrix<R,C,T>();
     
     for(int i = 0;i < R;i++)
     {
@@ -207,11 +217,11 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
             {
                 continue;
             }
-
-            if((*ret.magnitudeFunction)(ret.getEntry(j,i)) > maxMagnitude)
+            //std::cout << ret.getEntry(j,i).toString() << "\t" << ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i)) << "MAG\n";
+            if(ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i)) > maxMagnitude)
             {
                 maxEntry = j;
-                maxMagnitude = (*ret.magnitudeFunction)(ret.getEntry(j,i));
+                maxMagnitude = ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i));
             }
         }
 
@@ -231,7 +241,7 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
                 continue;
             }
 
-            if((*ret.magnitudeFunction)(ret.getEntry(j,i)) > MAGNITUDE_CUTOFF)
+            if( ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i)) > MAGNITUDE_CUTOFF)
             {
                 for(int k = 0; k < C;k++)
                 {
@@ -241,7 +251,7 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
                     }
                     ret.setEntry(j, k, ret.getEntry(maxEntry, k) - ret.getEntry(j, k) * ret.getEntry(maxEntry, i) / ret.getEntry(j, i));
                 }
-                ret.setEntry(j, i, ret.defaultValue);
+                ret.setEntry(j, i, T());
 
             }
             //std::cout << ret.toString() << "\n\n";
@@ -258,9 +268,9 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
         
         for(int j = 0;j < C - 1;j++)
         {
-            if((*ret.magnitudeFunction)(ret.getEntry(i, j)) > maxMagnitude)
+            if( ret.getEntry(i,j)._magnitudeOf(ret.getEntry(i, j)) > maxMagnitude)
             {
-                maxMagnitude = (*ret.magnitudeFunction)(ret.getEntry(i, j));
+                maxMagnitude =  ret.getEntry(i,j)._magnitudeOf(ret.getEntry(i, j));
                 maxEntry = j;
             }
 

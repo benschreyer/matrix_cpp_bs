@@ -12,11 +12,13 @@ class Complex
     public:
         float a;
         float b;
+        Complex();
         Complex(float a,  float b);
         Complex(std::array<float, 2>);
-
+        //Complex();
         std::string toString() const;
 
+        Complex operator-(const Complex& x) const;
         Complex operator+(const Complex& x) const;
         Complex operator*(const Complex& x) const;
         Complex operator/(const Complex& x) const;
@@ -24,6 +26,17 @@ class Complex
         Complex Conjugate() const;
         float MagnitudeSquared() const;
         float Magnitude() const;
+
+        
+
+        float _magnitudeOf(const Complex x);
+        std::string _toStringOf(const Complex x) ;
+
+
+        //static Complex _defaultValue = {0.0,0.0};
+        //static std::string (*toStringFunction)(const Complex x) = &_toStringOf;
+        //static float (*magnitudeFunction)(const Complex x) = &_magnitudeOf;
+
         //static float MagnitudeOf(Complex& x);
         //static std::string toStringOf(const Complex& x);
         
@@ -35,6 +48,12 @@ class Complex
 
 
 };
+
+Complex::Complex()
+{
+    this->a = 0.0;
+    this->b = 0.0;
+}
 
 Complex::Complex(float a, float b)
 {
@@ -84,6 +103,11 @@ Complex Complex::operator+(const Complex& x) const
     return Complex(x.a + this->a, x.b + this->b);
 }
 
+Complex Complex::operator-(const Complex& x) const
+{
+    return Complex(-1.0 * x.a + this->a, -1.0 * x.b + this->b);
+}
+
 Complex Complex::Conjugate() const
 {
     return Complex(this->a, -1.0 * this->b);
@@ -99,7 +123,15 @@ float Complex::MagnitudeSquared() const
     return ((*this) * this->Conjugate()).a;
 }
 
+float Complex::_magnitudeOf(const Complex x)
+{
+    return x.Magnitude();
+}
 
+std::string Complex::_toStringOf(const Complex x) 
+{
+    return x.toString();
+}
 
 
 
