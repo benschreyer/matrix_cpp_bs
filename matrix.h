@@ -121,9 +121,9 @@ std::string Matrix<R,C,T>::toString() const
         for(int j = 0;j < this->columns;j++)
         {
             //(*this->toStringFunction)
-            ret += this->ptr[i][j]._toStringOf(this->ptr[i][j]) + ", ";
+            ret += this->ptr[i][j].toString() + ", ";
         }
-        ret += "\n";
+        ret += ";\n";
     }
     return ret;
 }
@@ -183,7 +183,7 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
 {
     Matrix<R,C,T> ret = Matrix<R,C,T>();
     
-    for(int i = 0;i < R;i++)
+    for(int i = 0;i < ret.rows;i++)
     {
         for(int j = 0; j < C;j++)
         {
@@ -191,19 +191,23 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
         }
     }
     
-    for(int i = 0; i < C - 1; i++)
+
+    int* usedRows = new int[ret.rows];
+
+    for(int k = 0; k < ret.rows;k++)
+    {
+        usedRows[k] = -1;
+    }
+
+    for(int i = 0; i < ret.columns - 1; i++)
     {
         int maxEntry = 0;
         float maxMagnitude = -0.01;
 
-        int usedRows[R] = {};
 
-        for(int k = 0; k < R;k++)
-        {
-            usedRows[k] = -1;
-        }
 
-        for(int j = 0; j < R; j++)
+
+        for(int j = 0; j < ret.rows; j++)
         {
             bool flag = false;
             for(int k = 0;k < i;k++)
@@ -211,6 +215,7 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
                 if(usedRows[k] == j)
                 {
                     flag = true;
+                    break;
                 }
             }
             if(flag)
@@ -218,38 +223,40 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
                 continue;
             }
             //std::cout << ret.getEntry(j,i).toString() << "\t" << ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i)) << "MAG\n";
-            if(ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i)) > maxMagnitude)
+            if(ret.getEntry(j,i).Magnitude() > maxMagnitude)
             {
                 maxEntry = j;
-                maxMagnitude = ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i));
+                maxMagnitude = ret.getEntry(j,i).Magnitude();
             }
-        }
-
-
-
-        if(maxMagnitude < MAGNITUDE_CUTOFF)
-        {
-            continue;
         }
 
         usedRows[i] = maxEntry;
+        //std::cout << "MAX ENTRY:  " << maxEntry << "   " << maxMagnitude << "\n";
+        if(maxMagnitude < MAGNITUDE_CUTOFF)
+        {
+            //std::cout << "CONT\n";
+            continue;
+        }
 
-        for(int j = 0; j < R; j++)
+        
+
+        for(int j = 0; j < ret.rows; j++)
         {
             if(j == maxEntry)
             {
+
                 continue;
             }
 
-            if( ret.getEntry(j,i)._magnitudeOf(ret.getEntry(j,i)) > MAGNITUDE_CUTOFF)
+            if( ret.getEntry(j,i).Magnitude() > MAGNITUDE_CUTOFF)
             {
-                for(int k = 0; k < C;k++)
+                for(int k = 0; k < ret.columns;k++)
                 {
                     if(k == i)
                     {
                         continue;
                     }
-                    ret.setEntry(j, k, ret.getEntry(maxEntry, k) - ret.getEntry(j, k) * ret.getEntry(maxEntry, i) / ret.getEntry(j, i));
+                    ret.setEntry(j, k, ret.getEntry(maxEntry, k) / ret.getEntry(maxEntry, i) - ret.getEntry(j, k) / ret.getEntry(j, i));
                 }
                 ret.setEntry(j, i, T());
 
@@ -258,6 +265,12 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
             
         }
 
+        T temp = ret.getEntry(maxEntry, i);
+        for(int k = 0; k < ret.columns;k++)
+        {
+            ret.setEntry(maxEntry, k, ret.getEntry(maxEntry, k) / temp);
+        }
+        //std::cout << ret.toString() << "\n\n";
         
     }    
 
@@ -268,9 +281,9 @@ Matrix<R,C,T> Matrix<R,C,T>::RRef() const
         
         for(int j = 0;j < C - 1;j++)
         {
-            if( ret.getEntry(i,j)._magnitudeOf(ret.getEntry(i, j)) > maxMagnitude)
+            if( ret.getEntry(i,j).Magnitude() > maxMagnitude)
             {
-                maxMagnitude =  ret.getEntry(i,j)._magnitudeOf(ret.getEntry(i, j));
+                maxMagnitude =  ret.getEntry(i,j).Magnitude();
                 maxEntry = j;
             }
 

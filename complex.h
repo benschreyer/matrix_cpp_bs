@@ -29,8 +29,8 @@ class Complex
 
         
 
-        float _magnitudeOf(const Complex x);
-        std::string _toStringOf(const Complex x) ;
+        //float _magnitudeOf(const Complex x);
+        //std::string _toStringOf(const Complex x) ;
 
 
         //static Complex _defaultValue = {0.0,0.0};
@@ -72,7 +72,7 @@ Complex::Complex(std::array<float, 2> data)
 
 std::string Complex::toString() const
 {
-    return std::to_string(a) + " " + std::to_string(b) + "i";
+    return std::to_string(a) + " + " + std::to_string(b) + "i";
 }
 
 
@@ -123,15 +123,15 @@ float Complex::MagnitudeSquared() const
     return ((*this) * this->Conjugate()).a;
 }
 
-float Complex::_magnitudeOf(const Complex x)
+/*float Complex::_magnitudeOf(const Complex x)
 {
     return x.Magnitude();
-}
+}*/
 
-std::string Complex::_toStringOf(const Complex x) 
+/*std::string Complex::_toStringOf(const Complex x) 
 {
     return x.toString();
-}
+}*/
 
 
 

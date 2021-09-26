@@ -64,12 +64,26 @@ int main(void)
     {3.30, 24.0}, {122.321, -22.2}, {71.1,0.0}, {9429.0,-232222.0},
     {33.0, 34.0}, {1332.1, -322.2}, 
     };
+
+Complex mat2[12] = 
+    {
+    {3.1,-33.1}, {311.1,3.1}, {332.1,93.1}, {3.119,-3.1} ,
+    {3.1,32.1}, {35.1,-35.1}, {13.1,39.1}, {39.1,-33.1} ,
+    {38.1,803.1}, {-13.13,3.1}, {3.81,38.1}, {3.11,13.1} ,
+    };
+
     //std::cout << mat[3].toString();
     Matrix<9, 10, Complex> testComplexMatrix = Matrix<9, 10, Complex>( &mat[0]);
 
     std::cout << testComplexMatrix.toString() << "\n\n\n";
     std::cout << testComplexMatrix.RRef().toString() << "\n\n\n";
     std::cout << ( testComplexMatrix * Complex(2.0,0.0) + testComplexMatrix).RRef().toString() << "\n\n\n";
+
+   Matrix<3, 4, Complex> testComplexMatrix2 = Matrix<3, 4, Complex>( &mat2[0]);
+
+    std::cout << testComplexMatrix2.toString() << "\n\n\n";
+    std::cout << testComplexMatrix2.RRef().toString() << "\n\n\n";
+    //std::cout << ( testComplexMatrix2 * Complex(2.0,0.0) + testComplexMatrix2).RRef().toString() << "\n\n\n";
 
     return 0;
 }
